@@ -1,5 +1,5 @@
 from django.test import TestCase
-from lists.models import Item
+from lists.models import Item, List
 
 class HomePageTest(TestCase):
     def test_uses_home_template(self):
@@ -8,8 +8,9 @@ class HomePageTest(TestCase):
 
 class ListViewTest(TestCase):
     def test_displays_all_list_items(self):
-        Item.objects.create(text="itemey 1")
-        Item.objects.create(text="itemey 2")
+        mylist = List.objects.create()
+        Item.objects.create(text="itemey 1", list=mylist)
+        Item.objects.create(text="itemey 2", list=mylist)
         response = self.client.get("/lists/the-only-list-in-the-world/")
         self.assertContains(response, "itemey 1")
         self.assertContains(response, "itemey 2")
@@ -30,15 +31,23 @@ class NewListTest(TestCase):
         self.assertRedirects(response, "/lists/the-only-list-in-the-world/")
 
 
-class ItemModelTest(TestCase):
+class ListAndItemModelTest(TestCase):
     def test_saving_and_retrieving_items(self):
+        mylist = List()
+        mylist.save()
+
         first_item = Item()
         first_item.text = "The first (ever) list item"
+        first_item.list = mylist
         first_item.save()
 
         second_item = Item()
         second_item.text = "Item the second"
+        second_item.list = mylist
         second_item.save()
+
+        saved_list = List.objects.get()
+        self.assertEqual(saved_list, mylist)
 
         saved_items = Item.objects.all()
         self.assertEqual(saved_items.count(), 2)
@@ -46,4 +55,6 @@ class ItemModelTest(TestCase):
         first_item_saved = saved_items[0]
         second_item_saved = saved_items[1]
         self.assertEqual(first_item_saved.text, "The first (ever) list item")
+        self.assertEqual(first_item_saved.list, mylist)
         self.assertEqual(second_item_saved.text, "Item the second")
+        self.assertEqual(second_item_saved.list, mylist)
