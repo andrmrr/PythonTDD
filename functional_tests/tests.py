@@ -77,7 +77,7 @@ class NewVisitorTest(LiveServerTestCase):
 
         # Now a new user, Francis, comes along to the site.
 
-        ## We delete all the broser's cookies
+        ## We delete all the browser's cookies
         ## as a way of simulating a brand new user session
         ## Double hashtag comments are for whys (single are for the user story)
         self.browser.delete_all_cookies()
@@ -91,19 +91,19 @@ class NewVisitorTest(LiveServerTestCase):
         # Francis starts a new list by entering a new item.
         # He is less interesting than Edith...
         input_box = self.browser.find_element(By.ID, "id_new_item")
-        input_box.send_keys("But milk")
+        input_box.send_keys("Buy milk")
         input_box.send_keys(Keys.ENTER)
         self.wait_for_row_in_list_table("1: Buy milk")
 
         # Francis gets his own URL
         francis_list_url = self.browser.current_url
-        self.assertRegex(francis_list_url, "/list/.+")
+        self.assertRegex(francis_list_url, "/lists/.+")
         self.assertNotEqual(francis_list_url, edith_list_url)
 
-        # Again, there is not trace of Edith's list
+        # Again, there is no trace of Edith's list
         page_text = self.browser.find_element(By.TAG_NAME, "body").text
         self.assertNotIn("Buy peacock feathers", page_text)
-        self.assertNotIn("But milk", page_text)
+        self.assertIn("Buy milk", page_text)
 
         # Satisfied, they both go back to sleep
 
