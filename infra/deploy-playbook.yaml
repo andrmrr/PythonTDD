@@ -6,21 +6,67 @@
       ansible.builtin.apt:
         name: docker.io
         state: latest
-        update_cache: true
       become: true
 
-    - name: Add our user to the docker group, so we don't need sudo/become
-      ansible.builtin.user:
-        name: "{{ ansible_user }}"
-        groups: docker
-      become: true
+    - name: Build container image locally
+      community.docker.docker_image:
+        name: superlists
+        source: build
+        state: present
+        build:
+          path: ..
+          platform: linux/amd64
+        force_source: true
+      delegate_to: 127.0.0.1
 
-    - name: Reset ssh connection to allow the user/group change to take effect
-      ansible.builtin.meta: reset_connection
+    - name: Export container image locally
+      community.docker.docker_image:
+        name: superlists
+        archive_path: /tmp/superlists-img.tar
+        source: local
+      delegate_to: 127.0.0.1
 
-    - name: Run test container
+    - name: Upload image to server
+      ansible.builtin.copy:
+        src: /tmp/superlists-img.tar
+        dest: /tmp/superlists-img.tar
+
+    - name: Import container image on server
+      community.docker.docker_image:
+        name: superlists
+        load_path: /tmp/superlists-img.tar
+        source: load
+        force_source: true
+        state: present
+
+    - name: Ensure .env file exists
+      ansible.builtin.template:
+        src: env.j2
+        dest: ~/superlists.env
+        force: false  # do not recreate file if it already exists
+      vars:
+        host: "{{ inventory_hostname }}"
+        secret_key: "{{ lookup('password', '/dev/null length=32 chars=ascii_letters')}}"
+
+    - name: Ensure db.sqlite3 file exists outside container
+      ansible.builtin.file:
+        path: /home/elspeth/db.sqlite3
+        state: touch
+
+    - name: Run container
       community.docker.docker_container:
-        name: testcontainer
+        name: superlists
+        image: superlists
         state: started
-        image: busybox
-        command: echo hello world
+        recreate: true
+        env_file: ~/superlists.env
+        mounts:
+          - type: bind
+            source: /home/elspeth/db.sqlite3
+            target: /src/db.sqlite3
+        ports: 80:8888
+
+    - name: Run migration inside container
+      community.docker.docker_container_exec:
+        container: superlists
+        command: ./manage.py migrate
