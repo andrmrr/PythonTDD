@@ -40,7 +40,7 @@ describe("Superlists tests", () => {
   });
 
   it("error message should be hidden on input", () => {
-    initialize(inputSelector, errorSelector);
+    initialize(inputSelector);
 
     textInput.dispatchEvent(new InputEvent("input"));
 
@@ -48,7 +48,7 @@ describe("Superlists tests", () => {
   });
 
   it("error message should not be hidden before input is fired", () => {
-    initialize(inputSelector, errorSelector);
+    initialize(inputSelector);
     expect(errorMsg.checkVisibility()).toBe(true);
   });
 
