@@ -1,5 +1,8 @@
 FROM python:3.13-slim
 
+RUN apt-get update
+RUN apt-get install -y logwatch
+RUN echo "/usr/sbin/logwatch --output mail --mailto andrejaandrejic00@gmail.com --detail high" >> /etc/cron.daily/00logwatch
 RUN python -m venv /venv
 ENV PATH="/venv/bin:$PATH"
 
