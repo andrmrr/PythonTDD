@@ -6,7 +6,7 @@ from selenium.webdriver.common.keys import Keys
 
 from .base import FunctionalTest
 
-TEST_EMAIL = "edith@example.com"
+TEST_EMAIL = "kiyoka3734@exclussi.com"
 SUBJECT = "Your login link for Superlists"
 
 class LoginTest(FunctionalTest):
@@ -23,6 +23,10 @@ class LoginTest(FunctionalTest):
                 "Check your email", self.browser.find_element(By.CSS_SELECTOR, "body").text
             )
         )
+
+        if self.test_server:
+            # Testing real email sending from the server is not worth it.
+            return
 
         # She checks her email and finds a message
         email = mail.outbox.pop()

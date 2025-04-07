@@ -1,3 +1,4 @@
+---
 - hosts: all
 
   tasks:
@@ -6,7 +7,17 @@
       ansible.builtin.apt:
         name: docker.io
         state: latest
+        update_cache: true
       become: true
+
+    - name: Add our user to the docker group, so we don't need sudo/become
+      ansible.builtin.user:
+        name: '{{ ansible_user }}'
+        groups: docker
+      become: true
+
+    - name: Reset ssh connection to allow the user/group change to take effect
+      ansible.builtin.meta: reset_connection
 
     - name: Build container image locally
       community.docker.docker_image:
@@ -43,10 +54,11 @@
       ansible.builtin.template:
         src: env.j2
         dest: ~/superlists.env
-        force: false  # do not recreate file if it already exists
+        force: true  # update file if contents changed
       vars:
         host: "{{ inventory_hostname }}"
-        secret_key: "{{ lookup('password', '/dev/null length=32 chars=ascii_letters')}}"
+        secret_key: "{{ lookup('password', '/dev/null length=32 chars=ascii_letters') }}"
+        email_password: "{{ lookup('env', 'EMAIL_PASSWORD') }}"
 
     - name: Ensure db.sqlite3 file exists outside container
       ansible.builtin.file:
