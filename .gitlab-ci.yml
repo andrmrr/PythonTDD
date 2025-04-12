@@ -1,0 +1,52 @@
+# Use the same image as our Dockerfile
+image: python:slim
+
+# These two settigns let us cache pip-installed packages
+# It came from the default template
+variables:
+  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+cache:
+  paths:
+    - .cache/pip
+
+# "setUp" phase, before the main build
+before_script:
+  - python --version ; pip --version  # For debugging
+  - pip install virtualenv
+  - virtualenv .venv
+  - source .venv/bin/activate
+
+# This is the main build
+test:
+  script:
+    - pip install -r requirements.txt
+    # unit tests
+    - python src/manage.py test lists accounts
+    # if those pass all test, include functional
+    - pip install selenium
+    - cd src && python manage.py test
+
+# run:
+#   script:
+#     - pip install .
+#     # run the command here
+#   artifacts:
+#     paths:
+#       - build/*
+#
+# pages:
+#   script:
+#     - pip install sphinx sphinx-rtd-theme
+#     - cd doc
+#     - make html
+#     - mv build/html/ ../public/
+#   artifacts:
+#     paths:
+#       - public
+#   rules:
+#     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+
+# deploy:
+#   stage: deploy
+#   script: echo "Define your deployment script!"
+#   environment: production
