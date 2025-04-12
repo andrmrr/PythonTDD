@@ -30,6 +30,11 @@ test:
     - pip install selenium
     - cd src && python manage.py test
 
+  artifacts:
+    when: always
+    paths:
+      - src/functional_tests/screendumps/
+
 # run:
 #   script:
 #     - pip install .
