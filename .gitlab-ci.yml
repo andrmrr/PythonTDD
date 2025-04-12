@@ -31,7 +31,7 @@ test_python:
     - cd src && python manage.py test
 
   artifacts:
-    when: always
+    when: on_failure
     paths:
       - src/functional_tests/screendumps/
 
