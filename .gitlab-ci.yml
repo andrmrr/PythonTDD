@@ -23,6 +23,7 @@ test:
     # unit tests
     - python src/manage.py test lists accounts
     # if those pass all test, include functional
+    - apt update -y && apt install -y firefox-esr
     - pip install selenium
     - cd src && python manage.py test
 
