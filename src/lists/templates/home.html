@@ -4,7 +4,7 @@
 
 {% block extra_header %}
     {% url 'new_list' as form_action %}
-    {% include "form.html" with form_action=form_action %}
+    {% include "form.html" with form_action=form_action form=form %}
 {% endblock %}
 
 {% block scripts %}

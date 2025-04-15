@@ -11,6 +11,8 @@ class List(models.Model):
         on_delete=models.CASCADE
     )
 
+    shared_with = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="shared_with_me")
+
     @property
     def name(self):
         return self.item_set.first().text
