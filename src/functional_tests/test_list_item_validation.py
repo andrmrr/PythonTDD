@@ -15,13 +15,13 @@ class ItemValidationTest(FunctionalTest):
         list_page.get_item_input_box().send_keys(Keys.ENTER)
 
         # The browser intercepts the request, and does not load the list page
-        list_page.wait_for(
+        self.wait_for(
             lambda: self.browser.find_element(By.CSS_SELECTOR, "#id_text:invalid")
         )
 
         # She starts typing some text for the new item and the error disappears
         list_page.get_item_input_box().send_keys("Purchase milk")
-        list_page.wait_for(
+        self.wait_for(
             lambda: self.browser.find_element(By.CSS_SELECTOR, "#id_text:valid")
         )
 
@@ -34,13 +34,13 @@ class ItemValidationTest(FunctionalTest):
 
         # Again the browser will not comply
         list_page.wait_for_row_in_list_table("Purchase milk", 1)
-        list_page.wait_for(
+        self.wait_for(
             lambda: self.browser.find_element(By.CSS_SELECTOR, "#id_text:invalid")
         )
 
         # And she can make it happy by filling some text in
         list_page.get_item_input_box().send_keys("Make tea")
-        list_page.wait_for(
+        self.wait_for(
             lambda: self.browser.find_element(By.CSS_SELECTOR, "#id_text:valid")
         )
         list_page.get_item_input_box().send_keys(Keys.ENTER)
@@ -57,7 +57,7 @@ class ItemValidationTest(FunctionalTest):
         list_page.get_item_input_box().send_keys(Keys.ENTER)
 
         # She sees a helpful error message
-        list_page.wait_for(
+        self.wait_for(
             lambda: self.assertEqual(
                 list_page.get_error_element().text,
                 "You've already got this item"
@@ -71,7 +71,7 @@ class ItemValidationTest(FunctionalTest):
         list_page.add_list_item("Banter too thick")
         list_page.get_item_input_box().send_keys("Banter too thick")
         list_page.get_item_input_box().send_keys(Keys.ENTER)
-        list_page.wait_for(
+        self.wait_for(
             lambda: self.assertTrue(
                 list_page.get_error_element().is_displayed()
             )
@@ -81,7 +81,7 @@ class ItemValidationTest(FunctionalTest):
         list_page.get_item_input_box().send_keys("a")
 
         # She is pleased to see that the error message disappears
-        list_page.wait_for(
+        self.wait_for(
             lambda: self.assertFalse(
                 list_page.get_error_element().is_displayed()
             )

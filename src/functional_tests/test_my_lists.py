@@ -2,6 +2,7 @@ from selenium.webdriver.common.by import By
 
 from .base import FunctionalTest
 from .list_page import ListPage
+from .my_lists_page import MyListsPage
 
 class MyListsTest(FunctionalTest):
     def test_logged_in_users_lists_are_saved_as_my_lists(self):
@@ -13,26 +14,19 @@ class MyListsTest(FunctionalTest):
         list_page = ListPage(self)
         list_page.add_list_item("Reticulate splines")
         list_page.add_list_item("Immanentize eschaton")
-        frist_list_url = self.browser.current_url
+        first_list_url = self.browser.current_url
 
         # Sbe notices a "My lists" link, for the first time.
-        self.browser.find_element(By.LINK_TEXT, "My lists").click()
-
         # She sees her email in there in the page heading
-        list_page.wait_for(
-            lambda: self.assertIn(
-                "edith@example.com",
-                self.browser.find_element(By.CSS_SELECTOR, "h1").text
-            )
-        )
+        MyListsPage(self).go_to_my_lists_page("edith@example.com")
 
         # And she sees that her list is in there,
         # named according to its first list item
-        list_page.wait_for(
+        self.wait_for(
             lambda: self.browser.find_element(By.LINK_TEXT, "Reticulate splines")
         )
         self.browser.find_element(By.LINK_TEXT, "Reticulate splines").click()
-        list_page.wait_for(lambda: self.assertEqual(self.browser.current_url, frist_list_url))
+        self.wait_for(lambda: self.assertEqual(self.browser.current_url, first_list_url))
 
         # She decides to start another list, just to see
         self.browser.get(self.live_server_url)
@@ -40,13 +34,13 @@ class MyListsTest(FunctionalTest):
         second_list_url = self.browser.current_url
 
         # Under "my lists", her new list appears
-        self.browser.find_element(By.LINK_TEXT, "My lists").click()
-        list_page.wait_for(lambda: self.browser.find_element(By.LINK_TEXT, "Click cows"))
+        MyListsPage(self).go_to_my_lists_page("edith@example.com")
+        self.wait_for(lambda: self.browser.find_element(By.LINK_TEXT, "Click cows"))
         self.browser.find_element(By.LINK_TEXT, "Click cows").click()
-        list_page.wait_for(lambda: self.assertEqual(self.browser.current_url, second_list_url))
+        self.wait_for(lambda: self.assertEqual(self.browser.current_url, second_list_url))
 
         # She logs out. The "My lists" option disappears
         self.browser.find_element(By.CSS_SELECTOR, "#id_logout").click()
-        list_page.wait_for(
+        self.wait_for(
             lambda: self.assertEqual(self.browser.find_elements(By.LINK_TEXT, "My lists"), [])
         )

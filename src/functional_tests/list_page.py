@@ -10,10 +10,6 @@ class ListPage:
     
     def get_table_rows(self):
         return self.test.browser.find_elements(By.CSS_SELECTOR, "#id_list_table tr")
-    
-    @wait
-    def wait_for(self, fn):
-        return fn()
 
     @wait
     def wait_for_row_in_list_table(self, item_text, item_number):
@@ -51,3 +47,6 @@ class ListPage:
 
     def get_error_element(self):
         return self.test.browser.find_element(By.CSS_SELECTOR, ".invalid-feedback")
+    
+    def get_list_owner(self):
+        return self.test.browser.find_element(By.ID, "id_list_owner").text

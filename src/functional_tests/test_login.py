@@ -20,7 +20,7 @@ class LoginTest(FunctionalTest):
         self.browser.find_element(By.CSS_SELECTOR, "input[name=email]").send_keys(TEST_EMAIL, Keys.ENTER)
 
         # A message appears telling her an email has been sent
-        list_page.wait_for(
+        self.wait_for(
             lambda: self.assertIn(
                 "Check your email", self.browser.find_element(By.CSS_SELECTOR, "body").text
             )
