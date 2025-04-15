@@ -65,17 +65,17 @@ class FunctionalTest(StaticLiveServerTestCase):
             f"{self.__class__.__name__}.{self._testMethodName}-{timestamp}.{extension}"
         )
 
-    @wait
-    def wait_for_row_in_list_table(self, row_text):
-        rows = self.browser.find_elements(By.CSS_SELECTOR, "#id_list_table tr")
-        self.assertIn(row_text, [row.text for row in rows])
+    # @wait
+    # def wait_for_row_in_list_table(self, row_text):
+    #     rows = self.browser.find_elements(By.CSS_SELECTOR, "#id_list_table tr")
+    #     self.assertIn(row_text, [row.text for row in rows])
 
-    @wait
-    def wait_for(self, fn):
-        return fn()
+    # @wait
+    # def wait_for(self, fn):
+    #     return fn()
 
-    def get_item_input_box(self):
-        return self.browser.find_element(By.ID, "id_text")
+    # def get_item_input_box(self):
+    #     return self.browser.find_element(By.ID, "id_text")
     
     @wait
     def wait_to_be_logged_in(self, email):
@@ -89,12 +89,12 @@ class FunctionalTest(StaticLiveServerTestCase):
         navbar = self.browser.find_element(By.CSS_SELECTOR, ".navbar")
         self.assertNotIn(email, navbar.text)
 
-    def add_list_item(self, item_text):
-        num_rows = len(self.browser.find_elements(By.CSS_SELECTOR, "#id_list_table tr"))
-        self.get_item_input_box().send_keys(item_text)
-        self.get_item_input_box().send_keys(Keys.ENTER)
-        item_number = num_rows + 1
-        self.wait_for_row_in_list_table(f"{item_number}: {item_text}")
+    # def add_list_item(self, item_text):
+    #     num_rows = len(self.browser.find_elements(By.CSS_SELECTOR, "#id_list_table tr"))
+    #     self.get_item_input_box().send_keys(item_text)
+    #     self.get_item_input_box().send_keys(Keys.ENTER)
+    #     item_number = num_rows + 1
+    #     self.wait_for_row_in_list_table(f"{item_number}: {item_text}")
 
     def create_pre_authenticated_session(self, email):
         if self.test_server:
