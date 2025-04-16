@@ -17,32 +17,40 @@
                     </td></tr>
                 {% endfor %}
             </table>
-            <div>
-                List shared with:
-                <ul class="list-sharee">
-                    {% for us in list.shared_with.all %}
+            <div class="shared_with">
+                <div>
+                    List owner:
+                    <p id="id_list_owner">{{ list.owner.email }}</p>
+                    List shared with:
+                    <ul class="list-sharee">
+                        {% for us in list.shared_with.all %}
                         <li>
                             {{ us.email }}
                         </li>
-                    {% endfor %}
-                </ul>
-                <form method="POST" action="{% url 'share_list' list.id %}" >
-                    {% csrf_token %}
-                    Share your list with your friends!
-                    <input
-                        id="id_sharee"
-                        name="sharee"
-                        class="form-control form-control-lg {% if form.errors %}is-invalid{% endif %}"
-                        placeholder="your-friend@example.com"
-                        aria-desribedby="id_text_feedback"
-                        required
-                    />
-                    {% if form.errors %}
-                        <div id="id_text_feedback" class="invalid-feedback">
-                            {{ form.errors.text.0 }}
-                        </div>
-                    {% endif %}
-                </form>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% if list.owner.email == user.email %}
+                    <div>
+                        <form method="POST" action="{% url 'share_list' list.id %}" >
+                            {% csrf_token %}
+                            Share your list with your friends!
+                            <input
+                                id="id_sharee"
+                                name="sharee"
+                                class="form-control form-control-lg {% if form.errors %}is-invalid{% endif %}"
+                                placeholder="your-friend@example.com"
+                                aria-desribedby="id_text_feedback"
+                                required
+                            />
+                            {% if form.errors %}
+                                <div id="id_text_feedback" class="invalid-feedback">
+                                    {{ form.errors.text.0 }}
+                                </div>
+                            {% endif %}
+                        </form>
+                    </div>
+                {% endif %}
             </div>
         </div>
     </div>

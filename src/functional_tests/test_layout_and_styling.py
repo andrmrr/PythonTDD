@@ -28,3 +28,24 @@ class LayoutAndStylingTest(FunctionalTest):
         self.assertAlmostEqual(
             inputbox.location["x"] + inputbox.size["width"] / 2, 512, delta=10
         )
+
+    def test_row_orientation_for_list_sharing_elements(self):
+        # Edith logs in to her account
+        self.create_pre_authenticated_session("edith@example.com")
+
+        # She goes to the home page and starts a list
+        self.browser.get(self.live_server_url)
+        list_page = ListPage(self).add_list_item("Get help")
+
+        # She notices a "Share this list" option
+        share_box = list_page.get_share_box()
+        self.assertEqual(
+            share_box.get_attribute("placeholder"), "your-friend@example.com"
+        )
+
+        # And also notices the list owner's name, which is her
+        self.assertEqual("edith@example.com", list_page.get_list_owner())
+
+        # The list owner element is to the left of the "Share this list" option
+        list_owner_element = self.browser.find_element(By.ID, "id_list_owner")
+        self.assertLess(list_owner_element.location["x"], share_box.location["x"])
